@@ -3,8 +3,8 @@
 # This is using Modules for each Virtual Machine
 # --------------------------------
 # This will create a new Virtual Machine from a cloud-init file, copy the entire "module" below
-# and rename "example" below for each VM you want. Change the settings to match your environment/what youwant to use.
-module "example" {
+# and rename "vm1_id" below for each VM you want. Change the settings to match your environment/what youwant to use.
+module "vm1_id" {
     source = "./modules/vm"
     vmid       = 100
     name       = "VM Name goes here"

@@ -4,4 +4,5 @@ proxmox_api_token_secret = "This is a super secret API" # This is your ProxMox T
 ssh_key = <<EOF 
      ssh-ed25519 SUPERSECRET-SSH-Public-Key-LOL-Goes-Here-Delete-This-Line justin@initcyber.com 
      EOF
+ci_user = "YourUserNameForVM"     
 ci_password = "SuperSecretPassword"
