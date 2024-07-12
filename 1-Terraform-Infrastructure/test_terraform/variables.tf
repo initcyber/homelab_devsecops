@@ -33,15 +33,11 @@ variable "ci_password" {
     type = string
 }
 
-#variable "ubuntu_24_template" {
-#    type = string
-#}
+variable "ci_user" {
+    type = string
+}
 
-#variable "rhel_9_template" {
-#    type = string
-#}
-
-variable "ssh_keys" {
+variable "ssh_host_keys" {
 	type = map
      default = {
        pub  = "~/.ssh/id_rsa.pub"
