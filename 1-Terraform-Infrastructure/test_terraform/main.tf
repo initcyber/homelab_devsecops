@@ -3,7 +3,9 @@
 # This is using Modules for each Virtual Machine
 # --------------------------------
 # This will create a new Virtual Machine from a cloud-init file, copy the entire "module" below
-# and rename "example" below for each VM you want. Change the settings to match your environment/what youwant to use.
+# and rename "example" below for each VM you want. Change the settings to match your environment/what you want to use.
+# In ../modules/vm you can copy that folder over to separate names and change the "source" below to match
+# so that you can have different provisioners. Otherwise you can reuse the same /modules/vm folder for repeatable provisioners
 module "example" {
     source = "./modules/vm"
     vmid       = 100
