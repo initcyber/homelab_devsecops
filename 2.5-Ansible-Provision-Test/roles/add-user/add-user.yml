@@ -1,0 +1,24 @@
+---
+- hosts: "oracle-all"
+  become: true
+  vars:
+    users:
+      - "justin"
+  tasks:
+    - name: "Create user accounts"
+      user:
+        name: "{{ item }}"
+        groups: "admin,sudo,docker"
+        shell: /bin/bash
+      with_items: "{{ users }}"
+    - name: "Add authorized keys"
+      authorized_key:
+        user: "{{ item }}"
+        key: "{{ lookup('file', '~/.ssh/' + item + '-key.pub') }}"
+      with_items: "{{ users }}"
+    - name: "Allow sudo users to sudo without a password"
+      lineinfile:
+        dest: "/etc/sudoers" # path: in version 2.3
+        state: "present"
+        regexp: "^%sudo"
+        line: "%sudo ALL=(ALL) NOPASSWD: ALL"

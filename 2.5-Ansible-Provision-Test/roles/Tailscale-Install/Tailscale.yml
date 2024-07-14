@@ -1,0 +1,18 @@
+---
+# This installs Tailscale, create a file called "tailscalekey.ini" and put it on the same folder. Put your tailscale auth key on one line in that file.
+- hosts: splunk
+  become: yes
+  vars:
+    ts_auth_key: "{{ lookup('file', 'tailscalekey.ini')}}"
+
+  tasks:
+    # UPGRADE AND INSTALL REQUIRED UBUNTU PACKAGES
+    - name: One liner Tailscale Install
+      ansible.builtin.shell: curl -fsSL https://tailscale.com/install.sh | sh
+      args:
+        executable: /bin/bash    
+
+    - name: Sign into Tailscale and Accept Routes
+      ansible.builtin.shell: tailscale up --authkey={{ ts_auth_key }} --accept-routes
+      args:
+        executable: /bin/bash   

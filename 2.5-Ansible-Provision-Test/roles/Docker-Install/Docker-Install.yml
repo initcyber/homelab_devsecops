@@ -1,0 +1,116 @@
+---
+# Install Docker and Docker CE
+- hosts: all
+  become: yes
+  gather_facts: yes
+  vars:
+    docker_compose_version: "v2.28.1" #latest June 2024
+    docker_user: "justin"
+
+  tasks:
+    # UPGRADE AND INSTALL REQUIRED UBUNTU PACKAGES
+    - name: Perform an update/dist upgrade
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
+
+    - name: Install dependencies
+      ansible.builtin.apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+
+
+    # DOCKER INSTALLATION
+    - name: Add an apt signing key for Docker
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker APT repository
+      ansible.builtin.apt_repository:
+        repo: deb https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+
+    - name: Install Docker
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+
+    - name: Add user to docker group
+      user:
+        name: "{{docker_user}}"
+        group: docker
+
+    #Change URL to current URL and "-armv7" to "x86_64"  as needed
+    - name: Download docker-compose {{ docker_compose_version }}
+      get_url:
+        url: https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-linux-x86_64
+        dest: ~/docker-compose
+        mode: "+x"
+
+    - name: Check docker-compose exists
+      stat: path=~/docker-compose
+      register: docker_compose
+
+    - name: Move docker-compose to /usr/local/bin/docker-compose
+      command: mv ~/docker-compose /usr/local/bin/docker-compose
+      when: docker_compose.stat.exists
+
+    # REQUIRED PACKAGES FOR USING ANSIBLE DOCKER (for portainer installation below)
+    - name: Install related Ubuntu packages
+      apt:
+        name: "{{ packages }}"
+        state: latest
+      vars:
+        packages:
+          - python3-pip
+          - mc
+
+    - name: Install python packages
+      pip:
+        name: docker
+
+#   Sample Docker Container Creation - Will be installing Portainer Agent Instead then following up with remaining from node.
+    # https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html#ansible-collections-community-docker-docker-container-module
+    - name: Create portainer container
+      docker_container:
+        name: portainer
+        image: portainer/portainer-ce
+        state: started
+        recreate: yes
+        restart_policy: always
+        published_ports:
+          - "8000:8000"
+          - "9000:9000"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - portainer_data:/data
+
+
+
+    # FIREWALL SETUP - If Needed - Commented out for now
+    #- name: Open Portainer port
+    #  ufw:
+    #    state: enabled
+    #    rule: allow
+    #    port: "9000"
+    #    proto: tcp
+
+    #- name: Open SSH port
+    #  ufw:
+    #    state: enabled
+    #    rule: allow
+    #    port: "22"
+    #    proto: tcp

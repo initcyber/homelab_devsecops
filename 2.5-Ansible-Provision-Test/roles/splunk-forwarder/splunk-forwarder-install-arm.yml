@@ -1,0 +1,73 @@
+---
+- hosts: ubuntuarm
+  remote_user: justin
+  become: yes
+  become_method: sudo
+  vars:
+    username: justin
+    password: FakePasswordHere #Change this
+
+  tasks:
+
+    - name: Copy the Splunk Forwarder DEB to remote Servers.
+      copy:
+         src: /home/justin/splunkforwarder-9.1.3-d95b3299fa65-Linux-armv8.deb
+         dest: /home/justin/
+         owner: justin
+         group: justin
+         mode: 0644
+
+    - name: Install Splunk Forwarder deb package on remote servers.
+      ansible.builtin.apt:
+        deb: /home/justin/splunkforwarder-9.1.3-d95b3299fa65-Linux-armv8.deb
+
+
+    - name: Start Splunk forwarder service.
+      become: yes
+      expect:
+        command: /opt/splunkforwarder/bin/splunk start --accept-license
+        timeout: 60
+        responses:
+           (.*)Please enter an administrator username(.*): "{{ username }}"
+           (.*)Please enter a new password(.*): "{{ password }}"
+           (.*)Please confirm new password(.*): "{{ password }}"
+
+    - name: Connect Splunk forwarder to Splunk Enterprise server.
+      become: yes
+      ignore_errors: true #this is needed if we are updating Splunk forwarders
+      expect:
+        command: /opt/splunkforwarder/bin/splunk add forward-server splunk.home.initcyber.com:9997
+        timeout: 60
+        responses:
+          (.*)Splunk username(.*): "{{ username }}"
+          (.*)Password(.*): "{{ username }}"
+
+    - name: Connect Splunk forwarder to Splunk Enterprise deployment server.
+      become: yes
+      ignore_errors: true #this is needed if we are updating Splunk forwarders
+      expect:
+        command: /opt/splunkforwarder/bin/splunk set deploy-poll splunk.home.initcyber.com:8089
+        timeout: 60
+        responses:
+          (.*)Splunk username(.*): "{{ username }}"
+          (.*)Password(.*): "{{ username }}"
+
+
+    - name: Check Splunk forwarder service.
+      command:
+        /opt/splunkforwarder/bin/splunk status
+      register: service_splunk_status
+
+    - name: Report Splunk forwarder Status.
+      debug:
+         var: service_splunk_status.stdout_lines
+### Enable Boot Start
+    - name: Connect Splunk forwarder to Splunk Enterprise deployment server.
+      become: yes
+      ignore_errors: true #this is needed if we are updating Splunk forwarders
+      expect:
+        command: /opt/splunkforwarder/bin/splunk enable boot-start
+        timeout: 60
+        responses:
+          (.*)Splunk username(.*): "{{ username }}"
+          (.*)Password(.*): "{{ username }}"

@@ -1,0 +1,9 @@
+- name: setup rsyslog forwarding
+  ansible.builtin.copy:
+    src: 50-default.conf
+    dest: /etc/rsyslog.d/
+
+- name: restart rsyslog service
+  ansible.builtin.service:
+    name: rsyslog
+    state: restarted

@@ -1,0 +1,6 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - role: claranet.motd
+      motd_template: "{{ playbook_dir }}/templates/motd.j2"

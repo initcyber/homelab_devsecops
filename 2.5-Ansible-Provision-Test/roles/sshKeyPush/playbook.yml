@@ -1,0 +1,13 @@
+---
+- name: Deploy SSH Public Key
+  hosts: all
+  gather_facts: false
+  become: true
+  vars:
+    user: justin #ChangeUserName
+  tasks:
+  - name: SSH Key Deployment
+    ansible.posix.authorized_key:
+      user: "{{ user }}"
+      state: present
+      key: "{{ lookup('file', '/home/{{ user }}/.ssh/id_rsa.pub') }}"

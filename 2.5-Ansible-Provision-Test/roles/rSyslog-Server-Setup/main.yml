@@ -1,0 +1,17 @@
+#install rsyslog
+- name: Install rsyslog if not installed
+  apt:
+    name:
+      - rsyslog
+    state: present
+
+- name: Transfer rsyslog.conf to /etc/rsyslog.d
+  ansible.builtin.copy:
+    src: rsyslog.conf
+    dest: /etc/rsyslog
+  
+
+- name: restart rsyslog service
+  ansible.builtin.service:
+    name: rsyslog
+    state: restarted

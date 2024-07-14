@@ -1,0 +1,8 @@
+---
+# Setting Timezone to Eastern Time for Logging
+- hosts: all
+  become: yes
+
+  tasks:
+      - name: Update Time to New York/EST
+        ansible.builtin.shell: timedatectl set-timezone America/New_York
