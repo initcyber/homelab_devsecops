@@ -16,6 +16,7 @@ resource "proxmox_vm_qemu" "vm" {
   sockets    = var.sockets #1
   cpu        = var.cpu #"host"    
   memory      = var.memory
+  tags  = var.tags
   os_type   = var.os_type
   onboot = var.onboot #true 
   agent = var.agent

@@ -1,5 +1,5 @@
 # No leaky my creds
-*.auto.tfvars
+credentials.auto.tfvars
 
 **/.terraform/*
 

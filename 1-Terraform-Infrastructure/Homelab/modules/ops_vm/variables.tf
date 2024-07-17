@@ -148,6 +148,10 @@ variable "sshkeys" {
     type = string
 }
 
+variable "tags" {
+  description = "VM tag"
+  type        = string
+}
 
 variable "ansible_user" {
   description = "Ansible SSH user"
@@ -161,10 +165,10 @@ variable "ansible_private_key" {
   default     = "~/.ssh/id_rsa"
 }
 
-#variable "ansible_ssh_host_keys" {
-#	type = map
-#     default = {
-#       pub  = "~/.ssh/id_rsa.pub"
-#       priv = "~/.ssh/id_rsa"
-#     }
-#}
+variable "ansible_ssh_host_keys" {
+	type = map
+    default = {
+      pub  = "~/.ssh/id_rsa.pub"
+      priv = "~/.ssh/id_rsa"
+    }
+}
