@@ -1,0 +1,6 @@
+- name: Set login shell for ansible user
+  hosts: all
+  tasks:
+    - name: Change shell to /bin/bash
+      ansible.builtin.shell:
+        cmd: chsh -s /bin/bash ansible

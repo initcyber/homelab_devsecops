@@ -1,1 +1,0 @@
-ip=172.16.10.60/24,gw=172.16.10.1 ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_rsa

@@ -2,7 +2,7 @@
 *.auto.tfvars
 
 **/.terraform/*
-
+*.terraform.lock.*
 # Local .terraform directories
 **/.terraform/*
 
